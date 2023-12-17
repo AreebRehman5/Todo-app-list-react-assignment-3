@@ -1,106 +1,109 @@
-const taskInput = document.querySelector(".task-input input"),
-filters = document.querySelectorAll(".filters span"),
-clearAll = document.querySelector(".clear-btn"),
-taskBox = document.querySelector(".task-box");
-
-let editId,
-isEditTask = false,
-todos = JSON.parse(localStorage.getItem("todo-list"));
-
-filters.forEach(btn => {
-    btn.addEventListener("click", () => {
-        document.querySelector("span.active").classList.remove("active");
-        btn.classList.add("active");
-        showTodo(btn.id);
-    });
-});
-
-function showTodo(filter) {
-    let liTag = "";
-    if(todos) {
-        todos.forEach((todo, id) => {
-            let completed = todo.status == "completed" ? "checked" : "";
-            if(filter == todo.status || filter == "all") {
-                liTag += `<li class="task">
-                            <label for="${id}">
-                                <input onclick="updateStatus(this)" type="checkbox" id="${id}" ${completed}>
-                                <p class="${completed}">${todo.name}</p>
-                            </label>
-                            <div class="settings">
-                                <i onclick="showMenu(this)" class="uil uil-ellipsis-h"></i>
-                                <ul class="task-menu">
-                                    <li onclick='editTask(${id}, "${todo.name}")'><i class="uil uil-pen"></i>Edit</li>
-                                    <li onclick='deleteTask(${id}, "${filter}")'><i class="uil uil-trash"></i>Delete</li>
-                                </ul>
-                            </div>
-                        </li>`;
-            }
-        });
-    }
-    taskBox.innerHTML = liTag || `<span>You don't have any task here</span>`;
-    let checkTask = taskBox.querySelectorAll(".task");
-    !checkTask.length ? clearAll.classList.remove("active") : clearAll.classList.add("active");
-    taskBox.offsetHeight >= 300 ? taskBox.classList.add("overflow") : taskBox.classList.remove("overflow");
-}
-showTodo("all");
-
-function showMenu(selectedTask) {
-    let menuDiv = selectedTask.parentElement.lastElementChild;
-    menuDiv.classList.add("show");
-    document.addEventListener("click", e => {
-        if(e.target.tagName != "I" || e.target != selectedTask) {
-            menuDiv.classList.remove("show");
-        }
-    });
-}
-
-function updateStatus(selectedTask) {
-    let taskName = selectedTask.parentElement.lastElementChild;
-    if(selectedTask.checked) {
-        taskName.classList.add("checked");
-        todos[selectedTask.id].status = "completed";
+const addList = document.querySelector("#addlist");
+addList.addEventListener("click", () => {
+  const popupCard = document.createElement("div");
+  const popupCardP = document.createElement("p");
+  const popupCardInput = document.createElement("input");
+  const popupListAddBtn = document.createElement("a");
+  const popupListCloseBtn = document.createElement("a");
+  popupCard.className = "card1";
+  popupCardP.className = "card-title";
+  popupCardP.innerText = "Add New List";
+  popupCardInput.setAttribute("type", "text");
+  popupCardInput.setAttribute("placeholder", "Enter List Name");
+  popupListAddBtn.className = "btn add";
+  popupListAddBtn.innerText = "Add";
+  popupListAddBtn.setAttribute("id", "add");
+  popupListCloseBtn.className = "btn add";
+  popupListCloseBtn.innerText = "Delete";
+  popupListCloseBtn.setAttribute("id", "delete");
+  popupCard.appendChild(popupCardP);
+  popupCard.appendChild(popupCardInput);
+  popupCard.appendChild(popupListAddBtn);
+  popupCard.appendChild(popupListCloseBtn);
+  document.body.appendChild(popupCard);
+  document.querySelector("section").classList.add("blur");
+  popupListAddBtn.addEventListener("click", () => {
+    const listCard = document.createElement("div");
+    const listCardTitle = document.createElement("p");
+    listCard.className = "card";
+    listCardTitle.className = "card-title title-border inside-space";
+    if (popupCardInput.value == "") {
+      popupCardInput.classList.add("error");
+      setTimeout(function () {
+        popupCardInput.classList.remove("error");
+      }, 1000);
     } else {
-        taskName.classList.remove("checked");
-        todos[selectedTask.id].status = "pending";
+      listCardTitle.innerText = popupCardInput.value;
+      listCard.appendChild(listCardTitle);
+      document.querySelector(".tasks").appendChild(listCard);
+      toggle();
     }
-    localStorage.setItem("todo-list", JSON.stringify(todos))
-}
-
-function editTask(taskId, textName) {
-    editId = taskId;
-    isEditTask = true;
-    taskInput.value = textName;
-    taskInput.focus();
-    taskInput.classList.add("active");
-}
-
-function deleteTask(deleteId, filter) {
-    isEditTask = false;
-    todos.splice(deleteId, 1);
-    localStorage.setItem("todo-list", JSON.stringify(todos));
-    showTodo(filter);
-}
-
-clearAll.addEventListener("click", () => {
-    isEditTask = false;
-    todos.splice(0, todos.length);
-    localStorage.setItem("todo-list", JSON.stringify(todos));
-    showTodo()
-});
-
-taskInput.addEventListener("keyup", e => {
-    let userTask = taskInput.value.trim();
-    if(e.key == "Enter" && userTask) {
-        if(!isEditTask) {
-            todos = !todos ? [] : todos;
-            let taskInfo = {name: userTask, status: "pending"};
-            todos.push(taskInfo);
+    const addTask = document.createElement("i");
+    addTask.className = "ab ab1 fa-solid fa-circle-plus";
+    const deleteTask = document.createElement("i");
+    deleteTask.className = "ab fa-solid fa-trash-can";
+    listCard.appendChild(addTask);
+    listCard.appendChild(deleteTask);
+    addTask.addEventListener("click", () => {
+      const popupCard = document.createElement("div");
+      const popupCardP = document.createElement("p");
+      const popupCardInput = document.createElement("input");
+      const popupTaskAddBtn = document.createElement("a");
+      const popupTaskCloseBtn = document.createElement("a");
+      popupCard.className = "card1";
+      popupCardP.className = "card-title";
+      popupCardP.innerText = "Add New Task";
+      popupCardInput.setAttribute("type", "text");
+      popupCardInput.setAttribute("placeholder", "Enter List Name");
+      popupTaskAddBtn.className = "btn add";
+      popupTaskAddBtn.innerText = "Add";
+      popupTaskAddBtn.setAttribute("id", "add");
+      popupTaskCloseBtn.className = "btn add";
+      popupTaskCloseBtn.innerText = "Delete";
+      popupTaskCloseBtn.setAttribute("id", "delete");
+      popupCard.appendChild(popupCardP);
+      popupCard.appendChild(popupCardInput);
+      popupCard.appendChild(popupTaskAddBtn);
+      popupCard.appendChild(popupTaskCloseBtn);
+      document.body.appendChild(popupCard);
+      document.querySelector("section").classList.add("blur");
+      popupTaskAddBtn.addEventListener("click", () => {
+        if (popupCardInput.value == "") {
+          popupCardInput.classList.add("error");
+          setTimeout(function () {
+            popupCardInput.classList.remove("error");
+          }, 1000);
         } else {
-            isEditTask = false;
-            todos[editId].name = userTask;
+          const emptyDiv = document.createElement("div");
+          emptyDiv.className = "single-task";
+          const taskCheckBox = document.createElement("input");
+          taskCheckBox.setAttribute("type", "checkbox");
+          const taskName = document.createElement("label");
+          taskName.textContent = popupCardInput.value;
+          emptyDiv.appendChild(taskCheckBox);
+          emptyDiv.appendChild(taskName);
+          listCard.appendChild(emptyDiv);
+          toggle();
+          taskCheckBox.addEventListener("click", () => {
+            if (taskCheckBox.checked) {
+              taskName.setAttribute(
+                "style",
+                "color: red;text-decoration: line-through #ff0000 solid 3px;"
+              );
+              taskCheckBox.setAttribute("style", "display:none;");
+            }
+          });
         }
-        taskInput.value = "";
-        localStorage.setItem("todo-list", JSON.stringify(todos));
-        showTodo(document.querySelector("span.active").id);
-    }
+      });
+      popupTaskCloseBtn.addEventListener("click", toggle);
+    });
+    deleteTask.addEventListener("click", () => {
+      document.querySelector(".tasks").removeChild(listCard);
+    });
+  });
+  popupListCloseBtn.addEventListener("click", toggle);
+  function toggle() {
+    document.querySelector("section").classList.remove("blur");
+    document.querySelector(".card1").remove();
+  }
 });
